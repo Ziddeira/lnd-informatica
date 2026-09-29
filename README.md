@@ -53,12 +53,13 @@ Cada quadro é calculado a partir do tempo, então o mesmo código roda como pla
 ```bash
 npm run build && npm start               # site rodando (para capturar as telas)
 SITE_URL=http://localhost:3000 LND_ADMIN_TOKEN=... npm run video:capture   # atualiza video/assets/*.jpg
-npm run video:build                      # video/dist/apresentacao-lnd.html (player em arquivo único)
-npm run video:render                     # video/dist/apresentacao-lnd.mp4 (precisa do ffmpeg)
-npm run video:render -- --audio trilha.mp3   # com trilha sonora licenciada
+npm run video:audio                      # video/dist/trilha.wav (trilha original sintetizada, sincronizada com as cenas)
+npm run video:build                      # video/dist/apresentacao-lnd.html (player em arquivo único, com som)
+npm run video:render                     # video/dist/apresentacao-lnd.mp4 com a trilha (precisa do ffmpeg)
+npm run video:render -- --audio outra.mp3    # com outra trilha (ou --audio none para mudo)
 ```
 
-Para editar o roteiro, textos e tempos, altere a lista `SCENES` em `video/video.js`. Para abrir o player sem build, use `video/index.html`.
+Para editar o roteiro, textos e tempos, altere a lista `SCENES` em `video/video.js`. A trilha (`video/soundtrack.mjs`) é composta em código — 110 BPM, sem amostras de terceiros, livre de direitos — e lê os tempos das cenas do `video.js`; depois de mudar o roteiro, rode `video:audio` de novo e converta para o player com `ffmpeg -i video/dist/trilha.wav -b:a 160k video/assets/trilha.mp3`. Para abrir o player sem build, use `video/index.html`.
 
 ## Onde editar
 

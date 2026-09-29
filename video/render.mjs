@@ -1,11 +1,12 @@
 // Renderiza o vídeo quadro a quadro (1920×1080) com Playwright e codifica em MP4 (H.264) com ffmpeg.
 //
 //   node video/render.mjs                               → video/dist/apresentacao-lnd.mp4
-//   node video/render.mjs --audio trilha.mp3            → com trilha sonora (cortada no fim do vídeo)
+//   node video/render.mjs --audio trilha.mp3            → com outra trilha (padrão: dist/trilha.wav, se existir)
 //   node video/render.mjs --stills 3,20,45 --out-dir x  → só quadros PNG para revisão
 //
 // Requer ffmpeg no PATH (ou FFMPEG=/caminho/ffmpeg) e o Chromium do Playwright (npx playwright install chromium).
 import { spawn } from "node:child_process";
+import { existsSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -28,6 +29,10 @@ const src = path.resolve(args.src ?? path.join(here, "index.html"));
 const fps = Number(args.fps ?? 30);
 const out = path.resolve(args.out ?? path.join(here, "dist", "apresentacao-lnd.mp4"));
 const ffmpegBin = process.env.FFMPEG || "ffmpeg";
+// Usa a trilha gerada por soundtrack.mjs automaticamente, se existir (--audio outro.mp3 para trocar, --audio none para mudo).
+const defaultTrack = path.join(here, "dist", "trilha.wav");
+if (!args.audio && existsSync(defaultTrack)) args.audio = defaultTrack;
+if (args.audio === "none") delete args.audio;
 
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1 });

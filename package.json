@@ -11,6 +11,7 @@
     "build:html": "node scripts/static-build.mjs && node scripts/build-single-html.mjs",
     "lint": "eslint",
     "video:capture": "node video/capture.mjs",
+    "video:audio": "node video/soundtrack.mjs",
     "video:build": "node video/build.mjs",
     "video:render": "node video/render.mjs"
   },

@@ -706,6 +706,19 @@
     .map((s) => `<i style="left:${(s.start / DURATION) * 100}%"></i>`)
     .join("");
 
+  // Trilha sonora (video/soundtrack.mjs). Durante a reprodução, o áudio é o relógio mestre.
+  const audio = new Audio("assets/trilha.mp3");
+  audio.preload = "auto";
+  const muteBtn = $("btn-mute");
+  const SOUND_ON = '<svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg>';
+  const SOUND_OFF = '<svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/></svg>';
+  const syncMuteIcon = () => (muteBtn.innerHTML = audio.muted ? SOUND_OFF : SOUND_ON);
+  muteBtn.addEventListener("click", () => {
+    audio.muted = !audio.muted;
+    syncMuteIcon();
+  });
+  syncMuteIcon();
+
   let t = 0;
   let playing = false;
   let last = 0;
@@ -720,7 +733,8 @@
 
   function frame(now) {
     if (!playing) return;
-    t += (now - last) / 1000;
+    const audioClock = !audio.paused && audio.readyState >= 2 && Math.abs(audio.currentTime - t) < 1;
+    t = audioClock ? audio.currentTime : t + (now - last) / 1000;
     last = now;
     if (t >= DURATION) {
       t = DURATION;
@@ -736,12 +750,19 @@
     if (playing) {
       if (t >= DURATION) t = 0;
       last = performance.now();
+      if (t < audio.duration || Number.isNaN(audio.duration)) {
+        audio.currentTime = t;
+        audio.play().catch(() => undefined);
+      }
       requestAnimationFrame(frame);
+    } else {
+      audio.pause();
     }
   }
 
   function seek(sec) {
     t = clamp(sec, 0, DURATION);
+    audio.currentTime = Math.min(t, audio.duration || t);
     draw();
   }
 
@@ -779,6 +800,7 @@
     } else if (e.key === "ArrowRight") seek(t + 5);
     else if (e.key === "ArrowLeft") seek(t - 5);
     else if (e.key.toLowerCase() === "f") $("btn-full").click();
+    else if (e.key.toLowerCase() === "m") muteBtn.click();
   });
 
   let hideTimer = 0;

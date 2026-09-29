@@ -5,10 +5,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const MIME = { jpg: "image/jpeg", png: "image/png", woff2: "font/woff2" };
+const MIME = { jpg: "image/jpeg", png: "image/png", woff2: "font/woff2", mp3: "audio/mpeg" };
 
 async function inlineAssets(text) {
-  const refs = [...new Set(text.match(/assets\/[\w./-]+\.(?:jpg|png|woff2)/g) ?? [])];
+  const refs = [...new Set(text.match(/assets\/[\w./-]+\.(?:jpg|png|woff2|mp3)/g) ?? [])];
   for (const ref of refs) {
     const data = await readFile(path.join(here, ref));
     const uri = `data:${MIME[ref.split(".").pop()]};base64,${data.toString("base64")}`;
