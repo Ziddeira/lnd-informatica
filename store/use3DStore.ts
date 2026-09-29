@@ -26,7 +26,7 @@ export const use3DStore = create<Scene3DState>()((set) => ({
   isOpen: false,
   activePart: null,
   hoveredPart: null,
-  rgbColor: "#22d3ee",
+  rgbColor: "#ffaa01",
   rainbow: false,
   resetToken: 0,
   setOpen: (isOpen) => set(isOpen ? { isOpen } : { isOpen, activePart: null }),

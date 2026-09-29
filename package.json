@@ -6,8 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "build:static": "node scripts/static-build.mjs",
     "preview": "npx --yes serve@14 out -l 3100",
-    "build:html": "next build --webpack && node scripts/build-single-html.mjs",
+    "build:html": "node scripts/static-build.mjs && node scripts/build-single-html.mjs",
     "lint": "eslint"
   },
   "dependencies": {
@@ -23,6 +24,7 @@
     "react-dom": "19.2.8",
     "tailwind-merge": "^3.7.0",
     "three": "^0.186.1",
+    "zod": "^4.6.5",
     "zustand": "^5.0.15"
   },
   "devDependencies": {

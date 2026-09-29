@@ -29,7 +29,7 @@ export default function Navbar() {
     setOpen(false);
   }
 
-  const isActive = (href: string) => (href === "/" ? pathname === "/" : !href.includes("#") && pathname.startsWith(href));
+  const isActive = (href: string) => !href.includes("#") && pathname.startsWith(href);
 
   return (
     <header
@@ -40,16 +40,16 @@ export default function Navbar() {
     >
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:h-[72px] lg:px-8" aria-label="Principal">
         <Link href="/" aria-label="LND Informática — página inicial" className="shrink-0">
-          <Logo />
+          <Logo className="h-8 sm:h-9" />
         </Link>
 
-        <ul className="hidden items-center gap-1 lg:flex">
+        <ul className="hidden items-center gap-0.5 lg:flex">
           {NAV_LINKS.map((link) => (
             <li key={link.href}>
               <Link
                 href={link.href}
                 className={cn(
-                  "relative rounded-lg px-3.5 py-2 text-sm font-medium transition-colors",
+                  "relative rounded-lg px-3 py-2 text-sm font-medium transition-colors xl:px-3.5",
                   isActive(link.href) ? "text-white" : "text-slate-400 hover:text-white",
                 )}
               >
@@ -63,11 +63,14 @@ export default function Navbar() {
         </ul>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <a href={`tel:${COMPANY.phoneE164}`} className="flex items-center gap-1.5 text-sm text-slate-400 transition hover:text-white">
+          <a
+            href={`tel:${COMPANY.phoneE164}`}
+            className="hidden items-center gap-1.5 text-sm text-slate-400 transition hover:text-white xl:flex"
+          >
             <Phone className="h-4 w-4" />
             {COMPANY.phoneDisplay}
           </a>
-          <WhatsappCta label="Orçamento no WhatsApp" />
+          <WhatsappCta label="WhatsApp" />
         </div>
 
         <button

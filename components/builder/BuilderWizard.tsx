@@ -117,7 +117,7 @@ function Viewer() {
           aria-label="RGB arco-íris"
           onClick={toggleRainbow}
           className={cn(
-            "h-5 w-5 rounded-full border-2 bg-[conic-gradient(#ef4444,#f59e0b,#22c55e,#22d3ee,#a855f7,#ef4444)] transition hover:scale-110",
+            "h-5 w-5 rounded-full border-2 bg-[conic-gradient(#ef4444,#ffaa01,#22c55e,#22d3ee,#a855f7,#ef4444)] transition hover:scale-110",
             rainbow ? "border-white" : "border-transparent",
           )}
         />
@@ -138,7 +138,7 @@ function MobileBar() {
         <button
           type="button"
           disabled={count === 0}
-          onClick={() => openWhatsappWithBuild(build)}
+          onClick={() => void openWhatsappWithBuild(build)}
           className="inline-flex items-center gap-2 rounded-xl bg-whatsapp px-4 py-3 text-sm font-bold text-night disabled:opacity-40"
         >
           <MessageCircle className="h-4 w-4" /> Enviar ao Leonardo
