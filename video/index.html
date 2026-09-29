@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Novo site LND Informática — Apresentação</title>
+    <link rel="stylesheet" href="video.css" />
+  </head>
+  <body>
+    <div id="viewport">
+      <div id="stage" aria-live="off"></div>
+    </div>
+
+    <div id="start" role="button" tabindex="0" aria-label="Assistir à apresentação">
+      <span class="start-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
+      <span class="start-label">Assistir à apresentação</span>
+    </div>
+
+    <div id="controls" aria-label="Controles do vídeo">
+      <button id="btn-play" type="button" aria-label="Reproduzir/pausar"></button>
+      <span id="time">0:00 / 0:00</span>
+      <div id="timeline" role="slider" aria-label="Linha do tempo" tabindex="0">
+        <div id="timeline-fill"></div>
+        <div id="timeline-marks"></div>
+      </div>
+      <span id="chapter-name"></span>
+      <button id="btn-full" type="button" aria-label="Tela cheia">
+        <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" /></svg>
+      </button>
+    </div>
+
+    <script src="video.js"></script>
+  </body>
+</html>

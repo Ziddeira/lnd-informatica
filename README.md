@@ -45,6 +45,21 @@ As rotas ficam em arquivos `*.api.ts(x)`. O build estático ignora esses arquivo
 - `LND_DATA_DIR`: onde os contatos são gravados (JSON). Em hospedagens com disco efêmero (ex.: Vercel), aponte para um volume persistente ou use o e-mail/webhook como registro principal.
 - `NEXT_PUBLIC_SITE_URL`: domínio público, usado em links, sitemap e metadados.
 
+## Vídeo de apresentação
+
+Vídeo 16:9 (1920×1080, ~1min47) que apresenta o site e suas funcionalidades, feito em HTML/JavaScript em `video/`.
+Cada quadro é calculado a partir do tempo, então o mesmo código roda como player no navegador e é renderizado em MP4.
+
+```bash
+npm run build && npm start               # site rodando (para capturar as telas)
+SITE_URL=http://localhost:3000 LND_ADMIN_TOKEN=... npm run video:capture   # atualiza video/assets/*.jpg
+npm run video:build                      # video/dist/apresentacao-lnd.html (player em arquivo único)
+npm run video:render                     # video/dist/apresentacao-lnd.mp4 (precisa do ffmpeg)
+npm run video:render -- --audio trilha.mp3   # com trilha sonora licenciada
+```
+
+Para editar o roteiro, textos e tempos, altere a lista `SCENES` em `video/video.js`. Para abrir o player sem build, use `video/index.html`.
+
 ## Onde editar
 
 | O quê | Arquivo |
