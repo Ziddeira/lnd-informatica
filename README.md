@@ -17,6 +17,7 @@ npm install
 npm run dev        # desenvolvimento em http://localhost:3000
 npm run build      # gera o site estático em /out
 npm run preview    # serve /out em http://localhost:3100
+npm run build:html # gera lnd-informatica.html: o site inteiro num único arquivo, abre direto no navegador
 ```
 
 A pasta `out/` pode ser publicada em qualquer hospedagem estática (Vercel, Netlify, hospedagem comum).
