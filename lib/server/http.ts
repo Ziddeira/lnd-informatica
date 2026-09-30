@@ -49,7 +49,8 @@ export function isAllowedOrigin(request: NextRequest): boolean {
 
 /** URL pública do site (para links enviados no WhatsApp/e-mail). */
 export function siteOrigin(request: NextRequest): string {
-  return (process.env.NEXT_PUBLIC_SITE_URL || request.nextUrl.origin).replace(/\/$/, "");
+  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  return (process.env.NEXT_PUBLIC_SITE_URL || (vercel ? `https://${vercel}` : request.nextUrl.origin)).replace(/\/$/, "");
 }
 
 /* ------------------------------------------------------------ Rate limit */

@@ -25,6 +25,23 @@ npm run preview      # serve /out em http://localhost:3100
 npm run build:html   # gera lnd-informatica.html: o site inteiro num único arquivo, abre direto no navegador
 ```
 
+## Publicar na Vercel
+
+O projeto já vem configurado (`vercel.json`: Next.js, região São Paulo `gru1`, `npm ci` + `npm run build`).
+
+1. Em [vercel.com/new](https://vercel.com/new), importe o repositório do GitHub. Não precisa mudar nada na tela de build.
+2. **Production Branch:** a Vercel publica em produção a branch `main`. Faça o merge desta branch na `main`, ou, em
+   *Settings → Environments → Production → Branch Tracking*, aponte para a branch do site.
+3. **Guardar os contatos:** em *Storage → Upstash (Redis) → Create/Connect*, conecte um banco ao projeto (há plano gratuito).
+   As variáveis `KV_REST_API_URL` e `KV_REST_API_TOKEN` são criadas sozinhas e o site passa a usar o Redis.
+   Sem isso o site funciona, mas os contatos ficam só em memória temporária e nos avisos por e-mail/webhook.
+4. **Variáveis** (*Settings → Environment Variables*): `LND_ADMIN_TOKEN` (painel `/admin`) e, opcionalmente,
+   `RESEND_API_KEY` + `LND_NOTIFY_EMAIL_TO` (aviso por e-mail) e `LND_WEBHOOK_URL`. Depois, faça *Redeploy*.
+5. **Domínio:** em *Settings → Domains*, adicione `lndinformatica.com.br` e siga as instruções de DNS.
+   Enquanto isso, o site fica no endereço `*.vercel.app` do projeto (usado automaticamente em links e sitemap).
+
+Para conferir depois do deploy: `https://SEU-DOMINIO/api/health/` deve responder `"status":"ok"`.
+
 ## Backend
 
 As rotas ficam em arquivos `*.api.ts(x)`. O build estático ignora esses arquivos automaticamente (`next.config.ts`).
@@ -42,7 +59,7 @@ As rotas ficam em arquivos `*.api.ts(x)`. O build estático ignora esses arquivo
 
 - `LND_ADMIN_TOKEN`: habilita o painel `/admin`.
 - `RESEND_API_KEY` + `LND_NOTIFY_EMAIL_TO`: aviso de novo contato por e-mail. Alternativa ou complemento: `LND_WEBHOOK_URL` (Slack, Discord, n8n, Make, Zapier).
-- `LND_DATA_DIR`: onde os contatos são gravados (JSON). Em hospedagens com disco efêmero (ex.: Vercel), aponte para um volume persistente ou use o e-mail/webhook como registro principal.
+- `KV_REST_API_URL` + `KV_REST_API_TOKEN` (Upstash Redis): armazenamento recomendado na Vercel. Sem Redis, os contatos vão para arquivos JSON em `LND_DATA_DIR` (padrão `./.data`) — ou `/tmp`, temporário, na Vercel.
 - `NEXT_PUBLIC_SITE_URL`: domínio público, usado em links, sitemap e metadados.
 
 ## Vídeo de apresentação

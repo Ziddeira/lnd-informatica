@@ -5,10 +5,14 @@ import type { LeadData, LeadStatus } from "@/lib/schemas";
 import type { PartCategory } from "@/data/hardwareCatalog";
 
 /*
- * Armazenamento simples em arquivos JSON (um por coleção) — sem banco de dados para instalar.
- * Escritas são atômicas (arquivo temporário + rename) e serializadas por coleção.
- * Em hospedagens com disco efêmero (ex.: Vercel), configure LND_DATA_DIR para um volume persistente
- * ou use as notificações (e-mail/webhook) como registro principal dos contatos.
+ * Armazenamento de contatos e orçamentos, com dois motores e a mesma interface:
+ *
+ *  - Redis (Upstash) — usado automaticamente quando existem as variáveis KV_REST_API_URL/KV_REST_API_TOKEN
+ *    (criadas pela integração Upstash do Marketplace da Vercel) ou UPSTASH_REDIS_REST_URL/_TOKEN.
+ *    É o recomendado na Vercel, onde o disco das funções é somente leitura.
+ *  - Arquivos JSON — padrão em servidor próprio (pasta LND_DATA_DIR ou ./.data). Escritas atômicas
+ *    (arquivo temporário + rename) e serializadas por coleção. Na Vercel sem Redis, cai para /tmp:
+ *    funciona, mas é temporário — os avisos por e-mail/webhook passam a ser o registro principal.
  */
 
 export interface LeadRecord extends Omit<LeadData, "consent" | "website"> {
@@ -50,7 +54,69 @@ type CollectionName = keyof Collections;
 
 const MAX_ITEMS = 5000;
 
-export const DATA_DIR = process.env.LND_DATA_DIR || path.join(process.cwd(), ".data");
+export type StorageKind = "redis" | "file" | "tmp";
+
+/* ---------------------------------------------------------------- Redis (Upstash REST) */
+const REDIS_URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
+const REDIS_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+const PREFIX = process.env.LND_REDIS_PREFIX || "lnd";
+
+type RedisCommand = (string | number)[];
+
+async function redis(commands: RedisCommand[]): Promise<unknown[]> {
+  const res = await fetch(`${REDIS_URL!.replace(/\/$/, "")}/pipeline`, {
+    method: "POST",
+    headers: { authorization: `Bearer ${REDIS_TOKEN}`, "content-type": "application/json" },
+    body: JSON.stringify(commands),
+    cache: "no-store",
+    signal: AbortSignal.timeout(8000),
+  });
+  if (!res.ok) throw new Error(`Redis respondeu ${res.status}`);
+  const replies = (await res.json()) as { result?: unknown; error?: string }[];
+  const failed = replies.find((r) => r.error);
+  if (failed) throw new Error(`Redis: ${failed.error}`);
+  return replies.map((r) => r.result);
+}
+
+const itemsKey = (name: CollectionName) => `${PREFIX}:${name}:items`;
+const indexKey = (name: CollectionName) => `${PREFIX}:${name}:index`;
+const parse = <T,>(raw: unknown): T | undefined => (typeof raw === "string" ? (JSON.parse(raw) as T) : undefined);
+
+const redisStore = {
+  async list<K extends CollectionName>(name: K): Promise<Collections[K][]> {
+    const [ids] = (await redis([["ZREVRANGE", indexKey(name), 0, MAX_ITEMS - 1]])) as [string[]];
+    if (!ids.length) return [];
+    const [values] = (await redis([["HMGET", itemsKey(name), ...ids]])) as [unknown[]];
+    return values.map((v) => parse<Collections[K]>(v)).filter((v): v is Collections[K] => !!v);
+  },
+  async insert<K extends CollectionName>(name: K, item: Collections[K]): Promise<Collections[K]> {
+    await redis([
+      ["HSET", itemsKey(name), item.id, JSON.stringify(item)],
+      ["ZADD", indexKey(name), Date.parse(item.createdAt) || Date.now(), item.id],
+    ]);
+    return item;
+  },
+  async findById<K extends CollectionName>(name: K, id: string): Promise<Collections[K] | undefined> {
+    const [raw] = await redis([["HGET", itemsKey(name), id]]);
+    return parse<Collections[K]>(raw);
+  },
+  async update<K extends CollectionName>(name: K, id: string, patch: Partial<Collections[K]>) {
+    const current = await redisStore.findById(name, id);
+    if (!current) return undefined;
+    const next = { ...current, ...patch };
+    await redis([["HSET", itemsKey(name), id, JSON.stringify(next)]]);
+    return next;
+  },
+  async healthy() {
+    const [pong] = await redis([["PING"]]);
+    return pong === "PONG";
+  },
+};
+
+/* ---------------------------------------------------------------- Arquivos JSON */
+const onVercel = !!process.env.VERCEL;
+export const DATA_DIR =
+  process.env.LND_DATA_DIR || (onVercel ? path.join("/tmp", "lnd-data") : path.join(process.cwd(), ".data"));
 const fileOf = (name: CollectionName) => path.join(DATA_DIR, `${name}.json`);
 
 const queues = new Map<CollectionName, Promise<unknown>>();
@@ -82,46 +148,61 @@ async function save<K extends CollectionName>(name: K, items: Collections[K][]) 
   await rename(tmp, target);
 }
 
-export function list<K extends CollectionName>(name: K): Promise<Collections[K][]> {
-  return enqueue(name, () => load(name));
+const fileStore = {
+  list<K extends CollectionName>(name: K): Promise<Collections[K][]> {
+    return enqueue(name, () => load(name));
+  },
+  insert<K extends CollectionName>(name: K, item: Collections[K]): Promise<Collections[K]> {
+    return enqueue(name, async () => {
+      const items = await load(name);
+      items.unshift(item);
+      await save(name, items.slice(0, MAX_ITEMS));
+      return item;
+    });
+  },
+  async findById<K extends CollectionName>(name: K, id: string): Promise<Collections[K] | undefined> {
+    return (await fileStore.list(name)).find((item) => item.id === id);
+  },
+  update<K extends CollectionName>(name: K, id: string, patch: Partial<Collections[K]>) {
+    return enqueue(name, async () => {
+      const items = await load(name);
+      const index = items.findIndex((item) => item.id === id);
+      if (index === -1) return undefined;
+      items[index] = { ...items[index], ...patch };
+      await save(name, items);
+      return items[index];
+    });
+  },
+  async healthy() {
+    try {
+      await mkdir(DATA_DIR, { recursive: true });
+      const probe = path.join(DATA_DIR, `.probe-${process.pid}`);
+      await writeFile(probe, "ok");
+      await unlink(probe);
+      return true;
+    } catch {
+      return false;
+    }
+  },
+};
+
+/* ---------------------------------------------------------------- Interface pública */
+export const STORAGE_KIND: StorageKind = REDIS_URL && REDIS_TOKEN ? "redis" : onVercel && !process.env.LND_DATA_DIR ? "tmp" : "file";
+const store = STORAGE_KIND === "redis" ? redisStore : fileStore;
+
+if (STORAGE_KIND === "tmp") {
+  console.warn("[store] Vercel sem Redis: contatos gravados em /tmp (temporário). Conecte o Upstash para guardar de vez.");
 }
 
-export function insert<K extends CollectionName>(name: K, item: Collections[K]): Promise<Collections[K]> {
-  return enqueue(name, async () => {
-    const items = await load(name);
-    items.unshift(item);
-    await save(name, items.slice(0, MAX_ITEMS));
-    return item;
-  });
-}
+export const list = store.list;
+export const insert = store.insert;
+export const findById = store.findById;
+export const update = store.update;
 
-export async function findById<K extends CollectionName>(name: K, id: string): Promise<Collections[K] | undefined> {
-  return (await list(name)).find((item) => item.id === id);
-}
-
-export function update<K extends CollectionName>(
-  name: K,
-  id: string,
-  patch: Partial<Collections[K]>,
-): Promise<Collections[K] | undefined> {
-  return enqueue(name, async () => {
-    const items = await load(name);
-    const index = items.findIndex((item) => item.id === id);
-    if (index === -1) return undefined;
-    items[index] = { ...items[index], ...patch };
-    await save(name, items);
-    return items[index];
-  });
-}
-
-/** Verifica se o diretório de dados aceita escrita (usado no health check). */
+/** Verifica se o armazenamento está acessível (usado no health check). */
 export async function storageWritable(): Promise<boolean> {
   try {
-    await mkdir(DATA_DIR, { recursive: true });
-    const probe = path.join(DATA_DIR, `.probe-${process.pid}`);
-    await writeFile(probe, "ok");
-    await unlink(probe);
-    return true;
+    return await store.healthy();
   } catch {
     return false;
   }

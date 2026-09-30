@@ -1,10 +1,10 @@
 import type { MetadataRoute } from "next";
-import { COMPANY } from "@/data/company";
+import { siteUrl } from "@/lib/site";
 
 export const dynamic = "force-static";
 
 export default function robots(): MetadataRoute.Robots {
-  const base = (process.env.NEXT_PUBLIC_SITE_URL || COMPANY.siteUrl).replace(/\/$/, "");
+  const base = siteUrl();
   return {
     rules: { userAgent: "*", allow: "/", disallow: ["/admin/", "/api/", "/orcamento/"] },
     sitemap: `${base}/sitemap.xml`,

@@ -4,13 +4,14 @@ import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import WhatsappButton from "@/components/ui/WhatsappButton";
 import { COMPANY } from "@/data/company";
+import { siteUrl } from "@/lib/site";
 import "./globals.css";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"], display: "swap" });
 const space = Space_Grotesk({ variable: "--font-space", subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || COMPANY.siteUrl),
+  metadataBase: new URL(siteUrl()),
   title: {
     default: "LND Informática | Suporte de TI para Empresas, Servidores e PC Gamer em Palhoça",
     template: "%s | LND Informática",

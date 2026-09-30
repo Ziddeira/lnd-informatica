@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { COMPANY } from "@/data/company";
+import { siteUrl } from "@/lib/site";
 
 export const dynamic = "force-static";
 
@@ -13,6 +13,6 @@ const ROUTES = [
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = (process.env.NEXT_PUBLIC_SITE_URL || COMPANY.siteUrl).replace(/\/$/, "");
+  const base = siteUrl();
   return ROUTES.map(({ path, priority }) => ({ url: `${base}${path}`, changeFrequency: "monthly", priority }));
 }
