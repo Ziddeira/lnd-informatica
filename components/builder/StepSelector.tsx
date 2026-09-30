@@ -296,7 +296,7 @@ export default function StepSelector() {
         {isLast ? (
           <a
             href="#resumo"
-            className="inline-flex items-center gap-1.5 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-night transition hover:bg-cyan-300"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-night transition hover:bg-brand-light"
           >
             Revisar e enviar <ChevronRight className="h-4 w-4" />
           </a>
@@ -307,7 +307,7 @@ export default function StepSelector() {
               nextStep();
               document.getElementById("builder-top")?.scrollIntoView({ behavior: "smooth", block: "start" });
             }}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-night transition hover:bg-cyan-300"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-night transition hover:bg-brand-light"
           >
             Próximo: {STEPS[step + 1].short} <ChevronRight className="h-4 w-4" />
           </button>

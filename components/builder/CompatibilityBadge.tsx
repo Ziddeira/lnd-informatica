@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 const STYLES: Record<CompatStatus, { className: string; icon: typeof CircleCheck; fallback: string }> = {
   ok: { className: "border-emerald-400/20 bg-emerald-400/10 text-emerald-300", icon: CircleCheck, fallback: "Compatível" },
-  recommended: { className: "border-brand/30 bg-brand/10 text-brand", icon: Sparkles, fallback: "Recomendado" },
+  recommended: { className: "border-sky-400/30 bg-sky-400/10 text-sky-300", icon: Sparkles, fallback: "Recomendado" },
   warning: { className: "border-amber-400/25 bg-amber-400/10 text-amber-300", icon: CircleAlert, fallback: "Atenção" },
   error: { className: "border-rose-400/25 bg-rose-400/10 text-rose-300", icon: CircleX, fallback: "Incompatível" },
 };

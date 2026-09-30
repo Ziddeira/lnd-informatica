@@ -2,12 +2,21 @@
   "name": "lnd-informatica",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.9"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "build:static": "node scripts/static-build.mjs",
     "preview": "npx --yes serve@14 out -l 3100",
-    "lint": "eslint"
+    "build:html": "node scripts/static-build.mjs && node scripts/build-single-html.mjs",
+    "lint": "eslint",
+    "video:capture": "node video/capture.mjs",
+    "video:audio": "node video/soundtrack.mjs",
+    "video:build": "node video/build.mjs",
+    "video:render": "node video/render.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.9",
@@ -22,6 +31,7 @@
     "react-dom": "19.2.8",
     "tailwind-merge": "^3.7.0",
     "three": "^0.186.1",
+    "zod": "^4.6.5",
     "zustand": "^5.0.15"
   },
   "devDependencies": {
@@ -32,6 +42,7 @@
     "@types/three": "^0.186.0",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
+    "playwright": "^1.56.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

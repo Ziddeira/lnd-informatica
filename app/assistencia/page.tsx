@@ -8,7 +8,7 @@ import { QUICK_SERVICES, SERVICE_AREAS } from "@/data/services";
 export const metadata: Metadata = {
   title: "Assistência Técnica em Palhoça e Região",
   description:
-    "Assistência técnica de computadores, notebooks e servidores em Palhoça e Grande Florianópolis: limpeza com troca de pasta térmica, formatação, upgrades, reparos e consultoria de TI.",
+    "Assistência técnica de computadores, notebooks, servidores, impressoras e nobreaks em Palhoça e Grande Florianópolis: limpeza com troca de pasta térmica, formatação, upgrades e reparos.",
 };
 
 const PROCESS = [
@@ -34,7 +34,7 @@ const FAQ = [
   },
   {
     q: "Atendem empresas?",
-    a: "Sim. Prestamos consultoria de TI, manutenção de servidores, redes e suporte recorrente para empresas da Grande Florianópolis e de todo o Brasil (remoto).",
+    a: "Sim — é uma das nossas especialidades. Temos planos de suporte de TI, gestão de servidores, firewall e backup para empresas da Grande Florianópolis e de todo o Brasil (remoto). Veja a página Para Empresas.",
   },
   {
     q: "Os serviços têm garantia?",

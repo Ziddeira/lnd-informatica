@@ -6,11 +6,11 @@ import type { PartCategory } from "@/data/hardwareCatalog";
 import { STEPS, sanitizeSelections, type Selections } from "@/lib/builder";
 
 export const RGB_PRESETS = [
-  { name: "Ciano LND", value: "#22d3ee" },
+  { name: "Âmbar LND", value: "#ffaa01" },
+  { name: "Ciano", value: "#22d3ee" },
   { name: "Roxo", value: "#a855f7" },
   { name: "Vermelho", value: "#ef4444" },
   { name: "Verde", value: "#22c55e" },
-  { name: "Âmbar", value: "#f59e0b" },
   { name: "Branco", value: "#f8fafc" },
 ] as const;
 

@@ -1,12 +1,14 @@
 @import "tailwindcss";
 
 @theme {
-  --color-night: #04060a;
-  --color-panel: #0a0e16;
-  --color-panel-2: #101624;
-  --color-brand: #22d3ee;
-  --color-brand-strong: #06b6d4;
-  --color-accent: #a855f7;
+  /* Identidade LND: âmbar do logotipo sobre grafite */
+  --color-night: #07080b;
+  --color-panel: #0e1015;
+  --color-panel-2: #161920;
+  --color-brand: #ffaa01;
+  --color-brand-light: #ffc53d;
+  --color-brand-strong: #e69500;
+  --color-accent: #ff7a1a;
   --color-whatsapp: #25d366;
   --color-whatsapp-strong: #1ebe5b;
 
@@ -42,7 +44,7 @@ body {
 }
 
 ::selection {
-  background: rgb(34 211 238 / 0.35);
+  background: rgb(255 170 1 / 0.35);
   color: #fff;
 }
 
@@ -55,7 +57,7 @@ body {
 }
 
 .text-gradient {
-  background: linear-gradient(100deg, #67e8f9 0%, #22d3ee 35%, #a855f7 100%);
+  background: linear-gradient(100deg, #ffd166 0%, #ffaa01 45%, #ff7a1a 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

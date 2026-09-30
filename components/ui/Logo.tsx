@@ -1,35 +1,53 @@
 import { cn } from "@/lib/utils";
 
-export default function Logo({ className, compact = false }: { className?: string; compact?: boolean }) {
+/** Âmbar oficial da marca LND (extraído do logotipo). */
+export const BRAND_AMBER = "#ffaa01";
+
+const GEAR = { cx: 21.5, cy: 18.5 };
+const TEETH = Array.from({ length: 8 }, (_, i) => (i * Math.PI) / 4);
+
+/** Símbolo da LND: monitor com engrenagem. */
+function MarkPaths({ color }: { color: string }) {
   return (
-    <span className={cn("inline-flex items-center gap-2.5", className)}>
-      <svg viewBox="0 0 40 40" className="h-9 w-9 shrink-0" aria-hidden="true">
-        <defs>
-          <linearGradient id="lnd-logo-grad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#67e8f9" />
-            <stop offset="1" stopColor="#a855f7" />
-          </linearGradient>
-        </defs>
-        {/* "chip" com pinos */}
-        <rect x="6" y="6" width="28" height="28" rx="7" fill="#0a0e16" stroke="url(#lnd-logo-grad)" strokeWidth="2" />
-        {[12, 20, 28].map((p) => (
-          <g key={p} stroke="url(#lnd-logo-grad)" strokeWidth="2" strokeLinecap="round">
-            <line x1={p} y1="1.5" x2={p} y2="5" />
-            <line x1={p} y1="35" x2={p} y2="38.5" />
-            <line x1="1.5" y1={p} x2="5" y2={p} />
-            <line x1="35" y1={p} x2="38.5" y2={p} />
-          </g>
+    <g fill="none">
+      <rect x="3" y="3" width="37" height="31" rx="6.5" stroke={color} strokeWidth="5" />
+      <rect x="16.5" y="33" width="10" height="7.5" rx="2" fill={color} />
+      <g stroke={color}>
+        <circle cx={GEAR.cx} cy={GEAR.cy} r="4.6" strokeWidth="2.6" />
+        {TEETH.map((a) => (
+          <line
+            key={a}
+            x1={GEAR.cx + Math.cos(a) * 6.2}
+            y1={GEAR.cy + Math.sin(a) * 6.2}
+            x2={GEAR.cx + Math.cos(a) * 8.9}
+            y2={GEAR.cy + Math.sin(a) * 8.9}
+            strokeWidth="3"
+          />
         ))}
-        <text x="20" y="24.5" textAnchor="middle" fontSize="11" fontWeight="800" fill="#fff" fontFamily="var(--font-space), sans-serif">
-          LND
-        </text>
-      </svg>
-      {!compact && (
-        <span className="leading-none">
-          <span className="block font-display text-lg font-bold tracking-tight text-white">LND</span>
-          <span className="block text-[10px] font-semibold uppercase tracking-[0.28em] text-slate-400">Informática</span>
-        </span>
-      )}
-    </span>
+      </g>
+    </g>
+  );
+}
+
+export function LogoMark({ className, color = BRAND_AMBER }: { className?: string; color?: string }) {
+  return (
+    <svg viewBox="0 0 43 44" className={cn("h-9 w-9", className)} aria-hidden="true">
+      <MarkPaths color={color} />
+    </svg>
+  );
+}
+
+/** Logotipo oficial "[monitor] LND". */
+export default function Logo({ className, color = BRAND_AMBER }: { className?: string; color?: string }) {
+  return (
+    <svg viewBox="0 0 140 44" className={cn("h-9 w-auto", className)} role="img" aria-label="LND Informática">
+      <MarkPaths color={color} />
+      <g fill="none" stroke={color} strokeWidth="7" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M53 8.5 V31.5 H69" />
+        <path d="M78 31.5 V8.5 L97 31.5 V8.5" />
+        {/* D com a barra superior avançada, como no logotipo original */}
+        <path d="M106 8.5 H121 A12 12 0 0 1 133 20.5 A11 11 0 0 1 122 31.5 H113 V16" />
+      </g>
+    </svg>
   );
 }

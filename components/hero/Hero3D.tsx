@@ -6,12 +6,12 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
+  Building2,
   Flame,
   LockOpen,
   MousePointerClick,
   Palette,
   RotateCcw,
-  ShieldCheck,
   Sparkles,
   Star,
   Truck,
@@ -19,7 +19,6 @@ import {
 } from "lucide-react";
 import CanvasSkeleton from "@/components/3d/CanvasSkeleton";
 import HardwareModal from "@/components/3d/HardwareModal";
-import { WhatsappCta } from "@/components/ui/WhatsappButton";
 import { COMPANY } from "@/data/company";
 import { use3DStore } from "@/store/use3DStore";
 import { RGB_PRESETS } from "@/store/useBuilderStore";
@@ -32,9 +31,9 @@ const PcCanvas = dynamic(() => import("@/components/3d/PcCanvas"), {
 });
 
 const TRUST = [
-  { icon: ShieldCheck, text: "Peças com procedência e garantia" },
-  { icon: Flame, text: "Teste de estresse em toda montagem" },
-  { icon: Truck, text: "Envio de PCs para todo o Brasil" },
+  { icon: Building2, text: "Suporte de TI e servidores para empresas" },
+  { icon: Flame, text: "PCs Gamers com teste de estresse e garantia" },
+  { icon: Truck, text: "Presencial na Grande Florianópolis · remoto e envio para todo o Brasil" },
 ];
 
 export default function Hero3D() {
@@ -87,7 +86,7 @@ export default function Hero3D() {
               transition={{ duration: 0.6, delay: 0.05 }}
               className="font-display text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-5xl xl:text-6xl"
             >
-              Seu PC montado por quem entende <span className="text-gradient">há mais de 20 anos.</span>
+              Tecnologia que não para: <span className="text-gradient">da sua empresa ao seu setup gamer.</span>
             </motion.h1>
 
             <motion.p
@@ -96,8 +95,8 @@ export default function Hero3D() {
               transition={{ duration: 0.6, delay: 0.12 }}
               className="mt-5 max-w-xl text-base leading-relaxed text-slate-400 sm:text-lg"
             >
-              PCs Gamers e Workstations com cable management impecável, teste de estresse e garantia. Assistência técnica
-              especializada em Palhoça e Grande Florianópolis — e envio para todo o Brasil.
+              Mais de 20 anos de experiência em servidores, redes, suporte B2B e máquinas de alta performance. Da infraestrutura da
+              sua empresa ao PC Gamer montado com cable management impecável.
             </motion.p>
 
             <motion.div
@@ -107,13 +106,18 @@ export default function Hero3D() {
               className="mt-8 flex flex-col gap-3 sm:flex-row"
             >
               <Link
-                href="/monte-seu-pc"
-                className="group inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-6 py-3.5 text-base font-semibold text-night shadow-lg shadow-brand/25 transition hover:bg-cyan-300"
+                href="/empresas"
+                className="group inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-6 py-3.5 text-base font-semibold text-night shadow-lg shadow-brand/25 transition hover:bg-brand-light"
               >
-                Monte seu PC Gamer
+                Soluções para empresas
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Link>
-              <WhatsappCta size="lg" variant="outline" label="Falar com o Leonardo" />
+              <Link
+                href="/monte-seu-pc"
+                className="group inline-flex items-center justify-center gap-2 rounded-xl border border-brand/40 px-6 py-3.5 text-base font-semibold text-brand transition hover:bg-brand/10"
+              >
+                Monte seu PC Gamer
+              </Link>
             </motion.div>
 
             <ul className="mt-8 grid gap-2.5 text-sm text-slate-300">
@@ -168,7 +172,7 @@ export default function Hero3D() {
                 onClick={() => setOpen(!isOpen)}
                 className={cn(
                   "inline-flex shrink-0 items-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-semibold transition sm:gap-2 sm:px-3",
-                  isOpen ? "bg-white/10 text-white hover:bg-white/15" : "bg-brand text-night hover:bg-cyan-300",
+                  isOpen ? "bg-white/10 text-white hover:bg-white/15" : "bg-brand text-night hover:bg-brand-light",
                 )}
               >
                 {isOpen ? <X className="h-4 w-4" /> : <LockOpen className="h-4 w-4" />}
@@ -199,7 +203,7 @@ export default function Hero3D() {
                   aria-label="RGB arco-íris"
                   onClick={toggleRainbow}
                   className={cn(
-                    "h-5 w-5 rounded-full border-2 sm:h-6 sm:w-6 bg-[conic-gradient(#ef4444,#f59e0b,#22c55e,#22d3ee,#a855f7,#ef4444)] transition hover:scale-110",
+                    "h-5 w-5 rounded-full border-2 sm:h-6 sm:w-6 bg-[conic-gradient(#ef4444,#ffaa01,#22c55e,#22d3ee,#a855f7,#ef4444)] transition hover:scale-110",
                     rainbow ? "border-white" : "border-transparent",
                   )}
                 />

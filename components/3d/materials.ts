@@ -355,11 +355,11 @@ export function getMaterials(theme: Theme): MaterialSet {
 export function createRgbMaterials() {
   return {
     /** Faixa de LED direta (brilho máximo, alimenta o bloom). */
-    led: new THREE.MeshStandardMaterial({ color: "#000000", emissive: "#22d3ee", emissiveIntensity: 4, roughness: 0.4 }),
+    led: new THREE.MeshStandardMaterial({ color: "#000000", emissive: "#ffaa01", emissiveIntensity: 4, roughness: 0.4 }),
     /** Difusor leitoso (anéis de fans, barras da RAM). */
     diffuser: new THREE.MeshPhysicalMaterial({
       color: "#ffffff",
-      emissive: "#22d3ee",
+      emissive: "#ffaa01",
       emissiveIntensity: 2.2,
       roughness: 0.35,
       transparent: true,

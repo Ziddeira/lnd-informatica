@@ -16,7 +16,8 @@ import {
   STEPS,
   totalPrice,
 } from "@/lib/builder";
-import { buildWhatsappUrl } from "@/lib/whatsapp";
+import { saveQuote, STATIC_MODE } from "@/lib/api";
+import { openWhatsapp, prepareWhatsappWindow } from "@/lib/whatsapp";
 import { useBuilderStore } from "@/store/useBuilderStore";
 import { cn, formatBRL } from "@/lib/utils";
 
@@ -51,8 +52,18 @@ export function useBuildSummary() {
   }, [selections]);
 }
 
-export function openWhatsappWithBuild(build: ReturnType<typeof useBuildSummary>["build"]) {
-  window.open(buildWhatsappUrl(buildSummaryText(build, { forWhatsapp: true })), "_blank", "noopener,noreferrer");
+/**
+ * Envia a configuração para o WhatsApp. Com o servidor disponível, ela é salva antes (preços recalculados
+ * no backend) e a mensagem leva o link da configuração — assim o Leonardo abre a lista completa.
+ */
+export async function openWhatsappWithBuild(build: ReturnType<typeof useBuildSummary>["build"]) {
+  const message = buildSummaryText(build, { forWhatsapp: true });
+  if (STATIC_MODE) return openWhatsapp(message);
+
+  const win = prepareWhatsappWindow();
+  const { selections, rgbColor, rainbow } = useBuilderStore.getState();
+  const saved = await saveQuote({ selections, rgbColor, rainbow });
+  openWhatsapp(saved.ok ? `${message}\n\n🔗 Configuração ${saved.id}: ${saved.url}` : message, win);
 }
 
 export default function SummaryCard({ className }: { className?: string }) {
@@ -177,7 +188,7 @@ export default function SummaryCard({ className }: { className?: string }) {
       <button
         type="button"
         disabled={count === 0}
-        onClick={() => openWhatsappWithBuild(build)}
+        onClick={() => void openWhatsappWithBuild(build)}
         className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-whatsapp px-4 py-3.5 text-sm font-bold text-night shadow-lg shadow-whatsapp/20 transition hover:bg-whatsapp-strong disabled:cursor-not-allowed disabled:opacity-40"
       >
         <MessageCircle className="h-5 w-5" />

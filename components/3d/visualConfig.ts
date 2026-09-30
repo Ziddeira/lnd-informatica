@@ -23,7 +23,7 @@ export interface PcVisualConfig {
 
 export const DEFAULT_VISUAL_CONFIG: PcVisualConfig = {
   caseColor: "black",
-  rgbColor: "#22d3ee",
+  rgbColor: "#ffaa01",
   rainbow: false,
   show: { motherboard: true, cpu: true, ram: true, gpu: true, storage: true, psu: true, cooler: true },
   motherboard: { formFactor: "ATX", theme: "black", label: "LND GAMING" },

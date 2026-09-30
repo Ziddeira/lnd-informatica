@@ -1,0 +1,719 @@
+@font-face {
+  font-family: "Inter";
+  font-weight: 100 900;
+  src: url("assets/fonts/inter-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Space Grotesk";
+  font-weight: 300 700;
+  src: url("assets/fonts/space-grotesk-latin.woff2") format("woff2");
+}
+
+:root {
+  --amber: #ffaa01;
+  --amber-light: #ffc53d;
+  --orange: #ff7a1a;
+  --night: #07080b;
+  --panel: #0e1015;
+  --panel-2: #161920;
+  --line: rgb(255 255 255 / 0.09);
+  --text: #e6e9ef;
+  --muted: #94a3b8;
+  --green: #25d366;
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: #000;
+  overflow: hidden;
+  font-family: "Inter", system-ui, sans-serif;
+  color: var(--text);
+}
+
+/* ---------------------------------------------------------------- Palco 16:9 */
+#viewport {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+#stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  background: var(--night);
+  transform-origin: 0 0;
+}
+body.render #controls,
+body.render #start {
+  display: none !important;
+}
+
+/* ---------------------------------------------------------------- Fundo */
+.bg-grid {
+  position: absolute;
+  inset: -60px;
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.035) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse at center, #000 20%, transparent 75%);
+}
+.glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(140px);
+  will-change: transform;
+}
+.glow.a {
+  width: 760px;
+  height: 760px;
+  background: rgb(255 170 1 / 0.2);
+}
+.glow.b {
+  width: 640px;
+  height: 640px;
+  background: rgb(255 122 26 / 0.14);
+}
+
+/* ---------------------------------------------------------------- Cena */
+.scene {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+}
+.abs {
+  position: absolute;
+}
+.center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------- Tipografia */
+.display {
+  font-family: "Space Grotesk", "Inter", sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  color: #fff;
+  margin: 0;
+}
+.h1 {
+  font-size: 84px;
+}
+.h2 {
+  font-size: 68px;
+}
+.h3 {
+  font-size: 44px;
+}
+.eyebrow {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin: 0 0 22px;
+}
+.lead {
+  font-size: 30px;
+  line-height: 1.45;
+  color: var(--muted);
+  margin: 26px 0 0;
+}
+.grad {
+  background: linear-gradient(100deg, #ffd166 0%, #ffaa01 45%, #ff7a1a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.mono {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+
+/* ---------------------------------------------------------------- Listas */
+.bullets {
+  list-style: none;
+  margin: 40px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 22px;
+}
+.bullets li {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  font-size: 27px;
+  line-height: 1.35;
+  color: #d8dde6;
+}
+.check {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgb(255 170 1 / 0.14);
+  display: grid;
+  place-items: center;
+  margin-top: 1px;
+}
+.check svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--amber);
+  stroke-width: 3;
+  fill: none;
+}
+
+/* ---------------------------------------------------------------- Componentes */
+.card {
+  background: linear-gradient(180deg, rgb(22 25 32 / 0.95), rgb(14 16 21 / 0.95));
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  box-shadow: 0 40px 90px -30px rgb(0 0 0 / 0.8);
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 24px;
+  border-radius: 999px;
+  border: 1px solid rgb(255 170 1 / 0.28);
+  background: rgb(255 170 1 / 0.07);
+  font-size: 24px;
+  color: #f1f3f7;
+  white-space: nowrap;
+}
+.chip b {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--amber);
+}
+
+.browser {
+  position: absolute;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  background: #0b0c10;
+  box-shadow:
+    0 60px 120px -40px rgb(0 0 0 / 0.9),
+    0 0 0 1px rgb(0 0 0 / 0.4),
+    0 0 90px -30px rgb(255 170 1 / 0.35);
+}
+.browser .bar {
+  height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 18px;
+  background: #15171d;
+  border-bottom: 1px solid rgb(255 255 255 / 0.06);
+}
+.browser .bar i {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #3a3d45;
+}
+.browser .bar i:nth-child(1) {
+  background: #ff5f57;
+}
+.browser .bar i:nth-child(2) {
+  background: #febc2e;
+}
+.browser .bar i:nth-child(3) {
+  background: #28c840;
+}
+.browser .url {
+  margin: 0 auto;
+  min-width: 46%;
+  height: 28px;
+  border-radius: 8px;
+  background: #0b0c10;
+  color: #9aa3b2;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transform: translateX(-24px);
+}
+.browser .url svg {
+  width: 13px;
+  height: 13px;
+  stroke: #6b7280;
+  fill: none;
+  stroke-width: 2.4;
+}
+.browser .vp {
+  position: relative;
+  overflow: hidden;
+}
+.browser .vp img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  display: block;
+}
+
+.phone {
+  position: absolute;
+  width: 330px;
+  height: 700px;
+  border-radius: 54px;
+  padding: 12px;
+  background: linear-gradient(160deg, #2b2e36, #101216);
+  box-shadow:
+    0 50px 100px -30px rgb(0 0 0 / 0.9),
+    inset 0 0 0 2px rgb(255 255 255 / 0.08);
+}
+.phone .screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 43px;
+  overflow: hidden;
+  background: #000;
+}
+.phone .screen img {
+  width: 100%;
+  display: block;
+}
+.phone .island {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  width: 104px;
+  height: 30px;
+  margin-left: -52px;
+  border-radius: 20px;
+  background: #000;
+  z-index: 2;
+}
+
+.callout {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 24px 16px 18px;
+  border-radius: 18px;
+  background: rgb(10 11 15 / 0.92);
+  border: 1px solid rgb(255 170 1 / 0.45);
+  box-shadow: 0 24px 60px -20px rgb(0 0 0 / 0.9);
+  font-size: 23px;
+  font-weight: 500;
+  color: #fff;
+  white-space: nowrap;
+  z-index: 5;
+}
+.callout .dot {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--amber);
+  flex: none;
+}
+.callout .dot::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+  border: 2px solid rgb(255 170 1 / 0.5);
+}
+
+/* ---------------------------------------------------------------- HUD */
+#hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+}
+#hud .chapter {
+  position: absolute;
+  left: 110px;
+  top: 58px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #cbd2dc;
+}
+#hud .chapter .num {
+  color: var(--amber);
+  font-family: "Space Grotesk", sans-serif;
+}
+#hud .chapter .sep {
+  width: 34px;
+  height: 2px;
+  background: rgb(255 170 1 / 0.6);
+}
+#hud .mark {
+  position: absolute;
+  right: 110px;
+  top: 46px;
+  width: 150px;
+}
+#hud .progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 5px;
+  background: linear-gradient(90deg, var(--amber), var(--orange));
+}
+
+/* ---------------------------------------------------------------- Chat WhatsApp */
+.chat {
+  position: absolute;
+  width: 560px;
+  border-radius: 30px;
+  overflow: hidden;
+  background: #0b141a;
+  box-shadow: 0 60px 120px -30px rgb(0 0 0 / 0.95);
+  border: 1px solid rgb(255 255 255 / 0.08);
+}
+.chat .head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  background: #1f2c34;
+}
+.chat .avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #0b0c10;
+  display: grid;
+  place-items: center;
+}
+.chat .head b {
+  display: block;
+  font-size: 22px;
+  color: #fff;
+}
+.chat .head span {
+  font-size: 16px;
+  color: #8696a0;
+}
+.chat .body {
+  padding: 26px 24px 30px;
+  background: #0b141a;
+}
+.bubble {
+  margin-left: auto;
+  max-width: 470px;
+  padding: 18px 20px 12px;
+  border-radius: 18px 4px 18px 18px;
+  background: #005c4b;
+  color: #e9edef;
+  font-size: 20px;
+  line-height: 1.45;
+}
+.bubble p {
+  margin: 0 0 6px;
+}
+.bubble .link {
+  color: #53bdeb;
+  word-break: break-all;
+}
+.bubble .meta {
+  text-align: right;
+  font-size: 14px;
+  color: #a7c5bd;
+}
+
+/* ---------------------------------------------------------------- Fluxo backend */
+.node {
+  position: absolute;
+  width: 330px;
+  padding: 28px 28px 30px;
+  text-align: left;
+}
+.node .ico {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  background: var(--amber);
+  margin-bottom: 20px;
+}
+.node .ico svg {
+  width: 32px;
+  height: 32px;
+  stroke: #07080b;
+  stroke-width: 2.2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.node h4 {
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 32px;
+  color: #fff;
+}
+.node p {
+  margin: 10px 0 0;
+  font-size: 20px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+.wire {
+  position: absolute;
+  height: 3px;
+  background: linear-gradient(90deg, rgb(255 170 1 / 0.2), rgb(255 170 1 / 0.6));
+  transform-origin: 0 50%;
+}
+.packet {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border-radius: 50%;
+  background: var(--amber-light);
+  box-shadow: 0 0 22px 6px rgb(255 170 1 / 0.55);
+}
+
+/* ---------------------------------------------------------------- Identidade */
+.swatch {
+  position: absolute;
+  width: 250px;
+}
+.swatch .color {
+  height: 150px;
+  border-radius: 24px;
+  border: 1px solid rgb(255 255 255 / 0.1);
+}
+.swatch b {
+  display: block;
+  margin-top: 16px;
+  font-size: 24px;
+  color: #fff;
+}
+.swatch span {
+  font-size: 19px;
+  color: var(--muted);
+}
+
+.stat {
+  position: absolute;
+  width: 390px;
+  height: 300px;
+  padding: 40px 38px;
+}
+.stat .value {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 104px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: #fff;
+  line-height: 1;
+}
+.stat .label {
+  margin-top: 18px;
+  font-size: 25px;
+  color: var(--muted);
+}
+.stars {
+  display: flex;
+  gap: 6px;
+  margin-top: 22px;
+}
+.stars svg {
+  width: 28px;
+  height: 28px;
+  fill: var(--amber);
+}
+
+.price {
+  position: absolute;
+  padding: 26px 34px;
+  border-radius: 24px;
+  background: rgb(10 11 15 / 0.94);
+  border: 1px solid rgb(255 170 1 / 0.5);
+  box-shadow: 0 30px 70px -20px rgb(0 0 0 / 0.9), 0 0 60px -20px rgb(255 170 1 / 0.5);
+  z-index: 5;
+}
+.price small {
+  display: block;
+  font-size: 19px;
+  color: var(--muted);
+}
+.price strong {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 64px;
+  color: #fff;
+  letter-spacing: -0.03em;
+}
+
+.cursor {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  z-index: 20;
+  filter: drop-shadow(0 6px 10px rgb(0 0 0 / 0.6));
+}
+.ripple {
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  margin: -45px 0 0 -45px;
+  border-radius: 50%;
+  border: 3px solid var(--amber);
+  z-index: 19;
+}
+
+/* ---------------------------------------------------------------- Player */
+#start {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  background: rgb(0 0 0 / 0.55);
+  cursor: pointer;
+  backdrop-filter: blur(3px);
+}
+#start.hidden {
+  display: none;
+}
+.start-play {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--amber);
+  box-shadow: 0 0 0 14px rgb(255 170 1 / 0.2);
+}
+.start-play svg {
+  width: 46px;
+  height: 46px;
+  fill: #07080b;
+  margin-left: 6px;
+}
+.start-label {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+#controls {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  z-index: 90;
+  width: min(1100px, calc(100% - 32px));
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 16px;
+  border-radius: 16px;
+  background: rgb(12 13 17 / 0.85);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  backdrop-filter: blur(10px);
+  font-size: 14px;
+  color: #cbd2dc;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+body.show-controls #controls,
+#controls:focus-within {
+  opacity: 1;
+}
+#controls button {
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 10px;
+  background: rgb(255 255 255 / 0.08);
+  color: #fff;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+#controls button svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+}
+#btn-play svg {
+  fill: currentColor;
+  stroke: none;
+}
+#time {
+  font-variant-numeric: tabular-nums;
+  min-width: 92px;
+}
+#timeline {
+  position: relative;
+  flex: 1;
+  height: 8px;
+  border-radius: 8px;
+  background: rgb(255 255 255 / 0.12);
+  cursor: pointer;
+}
+#timeline-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 8px;
+  background: linear-gradient(90deg, var(--amber), var(--orange));
+}
+#timeline-marks i {
+  position: absolute;
+  top: -3px;
+  width: 2px;
+  height: 14px;
+  background: rgb(255 255 255 / 0.35);
+}
+#chapter-name {
+  min-width: 190px;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 640px) {
+  #chapter-name {
+    display: none;
+  }
+}
+.check.big {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+}
+.check.big svg {
+  width: 26px;
+  height: 26px;
+}

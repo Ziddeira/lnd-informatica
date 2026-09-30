@@ -4,43 +4,50 @@ import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import WhatsappButton from "@/components/ui/WhatsappButton";
 import { COMPANY } from "@/data/company";
+import { siteUrl } from "@/lib/site";
 import "./globals.css";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"], display: "swap" });
 const space = Space_Grotesk({ variable: "--font-space", subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl()),
   title: {
-    default: "LND Informática | PC Gamer, Assistência Técnica e Consultoria em Palhoça",
+    default: "LND Informática | Suporte de TI para Empresas, Servidores e PC Gamer em Palhoça",
     template: "%s | LND Informática",
   },
   description:
-    "Mais de 20 anos em informática: montagem de PC Gamer e Workstation com teste de estresse, assistência técnica especializada em Palhoça e Grande Florianópolis e envio para todo o Brasil. Nota 4,9 no Google.",
+    "Suporte de TI B2B, servidores Windows e Linux, firewall pfSense, redes e backup para empresas da Grande Florianópolis e de todo o Brasil. PCs Gamers montados com teste de estresse e assistência técnica em Palhoça. Nota 4,9 no Google.",
   keywords: [
+    "suporte de TI para empresas Palhoça",
+    "terceirização de TI Florianópolis",
+    "manutenção de servidores",
+    "firewall pfSense",
     "PC Gamer Palhoça",
     "assistência técnica Palhoça",
-    "montagem de PC",
-    "manutenção de notebook Florianópolis",
-    "consultoria TI empresas",
     "LND Informática",
   ],
   openGraph: {
-    title: "LND Informática — PC Gamer e Assistência Técnica",
-    description: "Monte seu PC Gamer com quem entende há mais de 20 anos. Nota 4,9 no Google com quase 5.000 avaliações.",
+    title: "LND Informática — TI para empresas e PCs de alta performance",
+    description: "Suporte B2B, servidores e redes para empresas. PC Gamer montado por quem entende há mais de 20 anos. Nota 4,9 no Google.",
     locale: "pt_BR",
     type: "website",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#04060a",
+  themeColor: "#07080b",
   colorScheme: "dark",
 };
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "ComputerStore",
+  "@type": ["ComputerStore", "ProfessionalService"],
   name: COMPANY.name,
+  url: COMPANY.siteUrl,
+  email: COMPANY.email,
+  foundingDate: String(COMPANY.foundedYear),
+  sameAs: Object.values(COMPANY.social),
   telephone: COMPANY.phoneE164,
   address: {
     "@type": "PostalAddress",
@@ -51,6 +58,7 @@ const jsonLd = {
     addressCountry: "BR",
   },
   areaServed: ["Palhoça", "São José", "Florianópolis", "Biguaçu", "Brasil"],
+  knowsAbout: ["Suporte de TI", "Windows Server", "Linux", "Active Directory", "pfSense", "Backup", "Google Workspace", "PC Gamer"],
   aggregateRating: {
     "@type": "AggregateRating",
     ratingValue: COMPANY.rating,
